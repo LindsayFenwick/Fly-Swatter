@@ -63,6 +63,12 @@ class Hand
           slap.trigger();
           swatDirection = up;
           numberOfFlyHit = collided();
+          
+          if (numberOfFlyHit != -1)
+          {
+            flies[numberOfFlyHit].alive = false;
+            fliesKilled = fliesKilled + 1;
+          }
         }
       }
       else if (swatDirection == up)
@@ -81,38 +87,19 @@ class Hand
 
   int collided()
   {
-    // Print some information about the flies to make this easier to debug
-    println("Hand is at x: ", x, "and y: ", y);
-    println("fly1 is at x: ", fly1.x, "and y: ", fly1.y);
-    println("Checking boundaries: x between ", x - minimumSize/2, " and ", x + minimumSize/2);
-    println("Checking boundaries: y between ", y + minimumSize/2, " and ", y - minimumSize/2);
-
     // Check the middle of each fly to see if the hand overlaps it
-    if (fly1.x >= (x - minimumSize/2) && fly1.x <= (x + minimumSize/2) &&
-      fly1.y <= (y + minimumSize/2) && fly1.y >= (y - minimumSize/2))
+    for (int i = 0; i < 100; i++)
     {
-      // Return the number of the fly I collided with
-      println("Hit fly 1");
-      return 1;
+      if (flies[i].x >= (x - minimumSize/2) && flies[i].x <= (x + minimumSize/2) &&
+        flies[i].y <= (y + minimumSize/2) && flies[i].y >= (y - minimumSize/2))
+      {
+        // Return the number of the fly I collided with
+        return i;
+      }
     }
-    else if (fly2.x >= (x - minimumSize/2) && fly2.x <= (x + minimumSize/2) &&
-      fly2.y <= (y + minimumSize/2) && fly2.y >= (y - minimumSize/2))
-    {
-      // Return the number of the fly I collided with
-      println("Hit fly 2");
-      return 2;
-    }
-    else if (fly3.x >= (x - minimumSize/2) && fly3.x <= (x + minimumSize/2) &&
-      fly3.y <= (y + minimumSize/2) && fly3.y >= (y - minimumSize/2))
-    {
-      // Return the number of the fly I collided with
-      println("Hit fly 3");
-      return 3;
-    }
-    else
-    {
-      // If no fly hit, return 0
-      return 0;
-    }
+
+    // If no fly hit, return -1
+    return -1;
   }
 }
+

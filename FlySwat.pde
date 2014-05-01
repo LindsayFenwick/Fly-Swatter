@@ -1,17 +1,31 @@
 import ddf.minim.*;
+PFont font;
+
+// Create array to hold the Fly objects we will create
+Fly[] flies = new Fly[10];
+
+// The font must be located in the sketch's 
+// "data" directory to load successfully
+
 
 // Create constants for ease of coding
 final boolean down = true;
 final boolean up = false;
+final int fliesToKill = 10;
 final int collisionThreshold = 50;
+
+// Game State variables
+// 0 = Start Screen, 1 = playing, 2 = end
+int gameState;
+int initialTime;
+int finalTime;
+int displayTimer;
+int fliesKilled;
 
 // Create a variable to hold the Hand object we will create
 Hand theHand;
 
-// Create variables to hold the Fly objects we will create
-Fly fly1;
-Fly fly2;
-Fly fly3;
+
 
 // Audio setup
 Minim minim;
@@ -21,6 +35,14 @@ AudioSample slap;
 void setup()
 {
   size(600, 400);
+  gameState = 0; // Start Screen
+  initialTime = 0;
+  finalTime = 0;
+  displayTimer = 0;
+  fliesKilled = 0;
+
+  font = loadFont("SourceSansPro-Light-48.vlw");
+  textFont(font, 48);
 
   // Allow the position of ellipses and images to be the center instead of top-left corner
   // Makes for ease and consistency in calculating collisions
@@ -30,12 +52,12 @@ void setup()
   // Initialize the hand, creating an object/instance that we can manipulate
   // as the sketch runs
   theHand = new Hand(50);
-  // fly1 = new Fly((int)random(width), (int)random(height));
-  // fly2 = new Fly((int)random(width), (int)random(height));
-  // fly3 = new Fly((int)random(width), (int)random(height));
-  fly1 = new Fly(50, 50);
-  fly2 = new Fly(150, 150);
-  fly3 = new Fly(250, 250);
+
+  // Initialize my flies
+  for (int i = 0; i < 100; i++)
+  {
+    flies[i] = new Fly((int)random(width), (int)random(height));
+  }
 
   // Setup Sound
   minim = new Minim(this);
@@ -46,17 +68,67 @@ void setup()
 
 void draw()
 {
-  background(255);
+  // Start Screen
+  if (gameState == 0)
+  {
+    text("Press the Enter key to start", 10, height/2);
+    if (keyPressed)
+    {
+      if (key == ENTER) 
+      {
+        gameState = 1;
+        initialTime = millis();
+        finalTime = millis() + 30000;
+        displayTimer = 5;
+      }
+    }
+  }
+  else if (gameState == 1) // Gameplay
+  {
+    background(255, 0, 0);
+    text(displayTimer, 10, 50);
 
-  // Use dot-notation to call the draw function for each fly
-  fly1.draw();
-  fly2.draw();
-  fly3.draw();
+    // Has 1 second passed
+    if (millis() - initialTime > 1000)
+    {
+      displayTimer = displayTimer - 1;
+      initialTime = millis();
+      // ENd the game if displayTimer is zero
+      if (displayTimer == 0)
+      {
+        println("Game End");
+        gameState = 2; //END
+      }
+    }
 
-  // Use dot-notation to call the hand's draw function
-  theHand.draw();
+    // Use dot-notation to call the draw function for each fly
+    for (int i = 0; i < 100; i++)
+    {
+      flies[i].draw();
+    }
 
-  // Check each fly to see if it's been swatted (delete if it was)
+    // Use dot-notation to call the hand's draw function
+    theHand.draw();
+
+
+
+    if (fliesKilled == fliesToKill)
+    {
+      gameState = 3;
+    }
+  }
+  else if (gameState == 2) // Bad End
+  {
+    background(0);
+    fill(255);
+    text("Game Over, You Suck", width/8, height/2);
+  }
+  else if (gameState == 3) // Good End
+  {
+    background(0);
+    fill(255);
+    text("Game Over, You Rock", width/8, height/2);
+  }
 }
 
 // If the mouse was pressed:
@@ -72,3 +144,4 @@ void keyPressed()
   if ( key == 'b' ) buzz.trigger();
   if ( key == 's' ) slap.trigger();
 }
+

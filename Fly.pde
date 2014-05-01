@@ -6,7 +6,7 @@ class Fly
   boolean alive; // Am I alive or not?
   int currentImage; // For the animation - what is the current image being shown?
 
-  // Constructor
+  // Constructor - setup function for the class
   Fly(int _x, int _y)
   {
     // Store the values that were given
@@ -30,30 +30,33 @@ class Fly
 
   void draw()
   {
-    if (currentImage == 1)
+    if (alive)
     {
-      image(frame1, x, y, w, h);
-      currentImage++;
-    }
-    else if (currentImage == 2)
-    {
-      image(frame2, x, y, w, h);
-      currentImage++;
-    }
-    else if (currentImage == 3)
-    {
-      image(frame3, x, y, w, h);
-      currentImage++;
-    }
-    else if (currentImage == 4)
-    {
-      image(frame2, x, y, w, h);
-      currentImage++;
-    }
-    else if (currentImage == 5)
-    {
-      image(frame1, x, y, w, h);
-      currentImage = 1;
+      if (currentImage == 1)
+      {
+        image(frame1, x, y, w, h);
+        currentImage++;
+      }
+      else if (currentImage == 2)
+      {
+        image(frame2, x, y, w, h);
+        currentImage++;
+      }
+      else if (currentImage == 3)
+      {
+        image(frame3, x, y, w, h);
+        currentImage++;
+      }
+      else if (currentImage == 4)
+      {
+        image(frame2, x, y, w, h);
+        currentImage++;
+      }
+      else if (currentImage == 5)
+      {
+        image(frame1, x, y, w, h);
+        currentImage = 1;
+      }
     }
   }
 
@@ -68,3 +71,4 @@ class Fly
     return alive;
   }
 }
+
