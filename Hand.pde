@@ -6,13 +6,13 @@ class Hand
   // as the mouse location, it's useful to have separate variables for the class
   // in order to make the code easier to understand
 
-  int size; // The width=height of the hand
-  int minimumSize;
-  int maximumSize;
-  boolean swatting; // Is it swatting or not
+  int size; // The width and height of the hand
+  int minimumSize; // The size of the hand at the "bottom" of the animation
+  int maximumSize; // The size of the hand at the "top" of the animation
+  boolean swatting; // Is the swatting or not
   boolean swatDirection; //true for down, false for up
 
-  int numberOfFlyHit; // Stores the number of the fly that was hit so that our main
+  int whichFlyHit; // Stores the number of the fly that was hit so that our main
   // draw function can check to see if there's a fly that needs to be marked "dead"
 
   // Constructor - setup for the class
@@ -21,9 +21,10 @@ class Hand
     size = _size; // Store the value that was given
     maximumSize = size;
     minimumSize = size/2;
-    swatting = false; // No swatting at the beginning
-    swatDirection = down; // Swatting motion shrinks the hand at first, then grows to get back to size
-    numberOfFlyHit = 0; // No flies hit at the beginning, obviously
+    swatting = false; // We aren't swatting at the beginning of the game
+    swatDirection = down; // Swatting motion shrinks the hand at first, 
+                          //then grows to get back to maximum size
+    whichFlyHit = 0; // No flies hit at the beginning, obviously
   }
 
   //Member functions
@@ -53,7 +54,7 @@ class Hand
     // If we're swatting, do the animation
     if (swatting)
     {
-      if (swatDirection == down)
+      if (swatDirection == down) // Move the hand down until it hits bottom, then bring it back up
       {
         // Make the hand smaller
         size-=4;
@@ -62,11 +63,10 @@ class Hand
           // We should play the sound, check for a collision, and go back up
           slap.trigger();
           swatDirection = up;
-          numberOfFlyHit = collided();
-          
-          if (numberOfFlyHit != -1)
+          whichFlyHit = collided();
+          if (whichFlyHit != -1)
           {
-            flies[numberOfFlyHit].alive = false;
+            flies[whichFlyHit].alive = false;
             fliesKilled = fliesKilled + 1;
           }
         }
@@ -87,19 +87,24 @@ class Hand
 
   int collided()
   {
+    // If no fly hit, return -1
+    int flyHit = -1;
+
     // Check the middle of each fly to see if the hand overlaps it
     for (int i = 0; i < 100; i++)
     {
-      if (flies[i].x >= (x - minimumSize/2) && flies[i].x <= (x + minimumSize/2) &&
-        flies[i].y <= (y + minimumSize/2) && flies[i].y >= (y - minimumSize/2))
+      // Only check collision with live flies
+      if (flies[i].alive)
       {
-        // Return the number of the fly I collided with
-        return i;
+        if (flies[i].x >= (x - minimumSize/2 - collisionThreshold) && flies[i].x <= (x + minimumSize/2 + collisionThreshold) &&
+          flies[i].y <= (y + minimumSize/2 + collisionThreshold) && flies[i].y >= (y - minimumSize/2 - collisionThreshold))
+        {
+          // Return the number of the fly I collided with
+          println("Fly " + i + " hit.");
+          flyHit = i;
+        }
       }
     }
-
-    // If no fly hit, return -1
-    return -1;
+    return flyHit;
   }
 }
-

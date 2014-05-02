@@ -14,7 +14,7 @@ class Fly
     y = _y;
 
     //  Set the initial values for the tracking variables
-    alive = true;
+    alive = true; 
     currentImage = 1;
 
     // Load the frames of the animation into memory
@@ -62,13 +62,7 @@ class Fly
 
   void move()
   {
-    // For now, have each fly move right to left and back
-  }
-
-  boolean amIHit()
-  {
-    alive = false;
-    return alive;
+    // Have each fly move right to left and back
   }
 }
 
